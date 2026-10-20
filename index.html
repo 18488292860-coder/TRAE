@@ -3,73 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRAE - 官方网站</title>
+    <meta name="description" content="TRAE - 下一代智能开发平台，助力开发者高效构建、测试与部署应用">
+    <title>TRAE · 智能开发平台</title>
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #06b6d4;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
             overflow-x: hidden;
         }
-        .container { text-align: center; padding: 2rem; max-width: 800px; width: 100%; }
-        .logo {
-            font-size: 5rem; font-weight: 800;
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shine 3s linear infinite;
-            margin-bottom: 1rem; letter-spacing: 4px;
+        .bg-grid {
+            position: fixed; inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 60%, rgba(6, 182, 212, 0.12), transparent 40%),
+                radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.1), transparent 50%);
+            z-index: -1;
         }
-        @keyframes shine { to { background-position: 200% center; } }
-        .subtitle { font-size: 1.5rem; color: rgba(255,255,255,0.8); margin-bottom: 2rem; font-weight: 300; }
-        .description { font-size: 1.1rem; color: rgba(255,255,255,0.6); line-height: 1.8; margin-bottom: 3rem; }
-        .badges { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
-        .badge {
-            padding: 0.5rem 1.2rem; background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
-            font-size: 0.9rem; backdrop-filter: blur(10px);
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.7);
+            border-bottom: 1px solid var(--border);
         }
-        .links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
-        .link-btn {
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-logo {
+            font-size: 1.4rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: 2px;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.8rem 2rem; background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-            color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 0.6rem 1.4rem; border-radius: 8px;
+            font-size: 0.9rem; font-weight: 600; text-decoration: none;
+            transition: all 0.2s; cursor: pointer; border: none;
         }
-        .link-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,210,255,0.3); }
-        .link-btn.secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); }
-        footer { margin-top: 4rem; color: rgba(255,255,255,0.4); font-size: 0.85rem; }
-        @media (max-width: 600px) {
-            .logo { font-size: 3rem; }
-            .subtitle { font-size: 1.2rem; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.45); }
+        .btn-ghost { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+        .hero { padding: 6rem 0 4rem; text-align: center; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 1rem; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 100px;
+            font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem;
+        }
+        .hero-badge .dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 800; line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 50%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 640px; margin: 0 auto 2.5rem; }
+        .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .section { padding: 5rem 0; }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.8rem; }
+        .section-title p { color: var(--text-muted); font-size: 1.05rem; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem; transition: all 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px); border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .feature-icon {
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px; font-size: 1.5rem; margin-bottom: 1.2rem;
+        }
+        .feature-card h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.6rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+        .stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem; text-align: center; padding: 3rem 0;
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        .stat-num {
+            font-size: 2.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+        .cta { text-align: center; padding: 5rem 0; }
+        .cta-box {
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.1));
+            border: 1px solid var(--border); border-radius: 24px; padding: 4rem 2rem;
+        }
+        .cta h2 { font-size: 2rem; margin-bottom: 1rem; }
+        .cta p { color: var(--text-muted); margin-bottom: 2rem; }
+        footer {
+            border-top: 1px solid var(--border); padding: 3rem 0 2rem;
+            text-align: center; color: var(--text-muted); font-size: 0.9rem;
+        }
+        footer a { color: var(--primary-light); text-decoration: none; }
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .hero { padding: 4rem 0 2rem; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="logo">TRAE</h1>
-        <p class="subtitle">这是 TRAE 的官方 GitHub 仓库</p>
-        <p class="description">
-            欢迎来到 TRAE 官方网站。TRAE 致力于提供卓越的开发体验，
-            帮助开发者更高效地构建、测试和部署应用程序。
-        </p>
-        <div class="badges">
-            <span class="badge">🚀 高效开发</span>
-            <span class="badge">⚡ 极速部署</span>
-            <span class="badge">🔧 全栈支持</span>
+    <div class="bg-grid"></div>
+    <nav>
+        <div class="container nav-inner">
+            <div class="nav-logo">TRAE</div>
+            <div class="nav-links">
+                <a href="#features">特性</a>
+                <a href="https://github.com/18488292860-coder/TRAE" target="_blank">GitHub</a>
+                <a href="README.md">文档</a>
+            </div>
+            <a href="https://github.com/18488292860-coder/TRAE" class="btn btn-primary" target="_blank">开始使用</a>
         </div>
-        <div class="links">
-            <a href="https://github.com/18488292860-coder/TRAE" class="link-btn" target="_blank">📦 GitHub 仓库</a>
-            <a href="README.md" class="link-btn secondary">📖 查看文档</a>
+    </nav>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span class="dot"></span> 下一代智能开发平台
+            </div>
+            <h1>用 AI 重新定义<br>开发体验</h1>
+            <p>TRAE 将人工智能融入开发全流程，从代码生成、智能调试到一键部署，让你专注于创造，而非重复劳动。</p>
+            <div class="hero-actions">
+                <a href="https://github.com/18488292860-coder/TRAE" class="btn btn-primary" target="_blank">🚀 立即开始</a>
+                <a href="#features" class="btn btn-ghost">了解更多</a>
+            </div>
         </div>
-        <footer><p>&copy; 2024 TRAE. All rights reserved.</p></footer>
-    </div>
+    </section>
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>核心特性</h2>
+                <p>为现代开发者打造的全栈智能工具链</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>极速部署</h3>
+                    <p>一键将应用部署到全球边缘网络，秒级上线，自动扩容，无需运维负担。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI 代码助手</h3>
+                    <p>智能代码补全、自动重构、Bug 检测，让 AI 成为你的结对编程伙伴。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>安全可靠</h3>
+                    <p>企业级安全防护，端到端加密，自动依赖漏洞扫描，守护你的每一行代码。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>持续集成</h3>
+                    <p>内置 CI/CD 流水线，自动化测试、构建、发布，让交付如丝般顺滑。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>实时监控</h3>
+                    <p>全方位性能监控与告警，可视化指标面板，问题第一时间触达。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>全球加速</h3>
+                    <p>覆盖全球的 CDN 节点，无论用户身在何处，都能享受极速访问体验。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="stats">
+                <div><div class="stat-num">99.9%</div><div class="stat-label">服务可用性</div></div>
+                <div><div class="stat-num">50ms</div><div class="stat-label">平均响应</div></div>
+                <div><div class="stat-num">10K+</div><div class="stat-label">开发者信赖</div></div>
+                <div><div class="stat-num">24/7</div><div class="stat-label">技术支持</div></div>
+            </div>
+        </div>
+    </section>
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2>准备好开启智能开发之旅了吗？</h2>
+                <p>加入 TRAE，让 AI 为你的开发效率赋能</p>
+                <a href="https://github.com/18488292860-coder/TRAE" class="btn btn-primary" target="_blank">免费开始使用 →</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>© 2026 TRAE. 基于 <a href="https://pages.github.com" target="_blank">GitHub Pages</a> 构建 · All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
