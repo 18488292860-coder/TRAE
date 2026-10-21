@@ -1,0 +1,446 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>闲鱼 - 让你的闲置游起来</title><style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    background: #f5f5f5;
+    color: #222;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #f5f5f5;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 70px;
+  }
+
+  /* ===== Status Bar ===== */
+  .status-bar {
+    height: 38px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .status-bar .right { display: flex; align-items: center; gap: 5px; }
+  .status-bar .signal { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+  .status-bar .signal i { width: 3px; background: #222; border-radius: 1px; }
+  .status-bar .signal i:nth-child(1){height:4px} .status-bar .signal i:nth-child(2){height:6px}
+  .status-bar .signal i:nth-child(3){height:9px} .status-bar .signal i:nth-child(4){height:12px}
+  .status-bar .battery {
+    width: 24px; height: 12px; border: 1px solid #222; border-radius: 3px; position: relative;
+    display: flex; align-items: center; padding: 1px;
+  }
+  .status-bar .battery::after { content:''; position:absolute; right:-3px; top:3px; width:2px; height:4px; background:#222; border-radius:0 1px 1px 0; }
+  .status-bar .battery i { height: 100%; background: #222; border-radius: 1px; width: 75%; }
+
+  /* ===== Header ===== */
+  .header {
+    background: #fff;
+    padding: 8px 14px 10px;
+    position: sticky;
+    top: 38px;
+    z-index: 99;
+  }
+  .header-top { display: flex; align-items: center; gap: 10px; }
+  .logo { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .logo .fish {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, #FFD000 0%, #FF9500 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .logo .name { font-size: 20px; font-weight: 800; color: #FF6B00; letter-spacing: -0.5px; }
+  .search-box {
+    flex: 1;
+    height: 36px;
+    background: #f5f5f5;
+    border-radius: 18px;
+    display: flex; align-items: center;
+    padding: 0 14px;
+    gap: 6px;
+  }
+  .search-box svg { flex-shrink: 0; opacity: 0.5; }
+  .search-box span { color: #999; font-size: 14px; flex: 1; }
+  .search-box .tag {
+    background: linear-gradient(135deg, #FFD000, #FF9500);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .msg-btn {
+    position: relative;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .msg-btn .badge {
+    position: absolute; top: 0; right: 0;
+    background: #ff3b30; color: #fff;
+    font-size: 10px; min-width: 16px; height: 16px;
+    border-radius: 8px; padding: 0 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+  }
+
+  /* ===== Top Tabs ===== */
+  .top-tabs {
+    display: flex;
+    background: #fff;
+    padding: 6px 14px 10px;
+    gap: 22px;
+    position: sticky;
+    top: 92px;
+    z-index: 98;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .top-tabs .tab {
+    font-size: 16px;
+    color: #999;
+    font-weight: 500;
+    position: relative;
+    padding: 4px 0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .top-tabs .tab.active {
+    color: #222;
+    font-weight: 700;
+    font-size: 19px;
+  }
+  .top-tabs .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD000, #FF6B00);
+    border-radius: 2px;
+  }
+  .top-tabs .spacer { flex: 1; }
+  .filter-btn {
+    display: flex; align-items: center; gap: 4px;
+    color: #999; font-size: 14px;
+  }
+
+  /* ===== Categories ===== */
+  .categories {
+    background: #fff;
+    padding: 14px 10px 16px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px 4px;
+    margin-bottom: 8px;
+  }
+  .cat-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .cat-icon {
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .cat-label { font-size: 12px; color: #333; }
+
+  /* ===== Banner ===== */
+  .banner {
+    margin: 0 12px 10px;
+    height: 90px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FFD000 0%, #FF6B00 100%);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .banner::before {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+  }
+  .banner::after {
+    content: '';
+    position: absolute;
+    right: 40px; bottom: -40px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+  }
+  .banner-text { color: #fff; z-index: 1; }
+  .banner-text .t1 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .banner-text .t2 { font-size: 13px; opacity: 0.95; }
+  .banner-fish {
+    font-size: 50px;
+    z-index: 1;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+  }
+
+  /* ===== Section Title ===== */
+  .section-title {
+    display: flex; align-items: center; gap: 6px;
+    padding: 12px 14px 8px;
+  }
+  .section-title .bar {
+    width: 3px; height: 14px;
+    background: linear-gradient(180deg, #FFD000, #FF6B00);
+    border-radius: 2px;
+  }
+  .section-title .title { font-size: 16px; font-weight: 700; }
+  .section-title .sub { font-size: 12px; color: #999; margin-left: 4px; }
+
+  /* ===== Product Grid (Masonry) ===== */
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 10px;
+  }
+  .product-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    break-inside: avoid;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .product-card:active { transform: scale(0.97); }
+  .product-img {
+    width: 100%;
+    background: #f0f0f0;
+    position: relative;
+    display: block;
+  }
+  .product-img img { width: 100%; display: block; }
+  .product-tag {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: rgba(255,77,0,0.92);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .product-wants {
+    position: absolute;
+    bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .product-info { padding: 8px 10px 10px; }
+  .product-title {
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: #222;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 36px;
+  }
+  .product-price {
+    display: flex; align-items: baseline; gap: 2px;
+    margin-top: 6px;
+  }
+  .product-price .currency { font-size: 12px; color: #FF5000; font-weight: 700; }
+  .product-price .amount { font-size: 17px; color: #FF5000; font-weight: 800; }
+  .product-price .original { font-size: 11px; color: #bbb; text-decoration: line-through; margin-left: 4px; }
+  .product-seller {
+    display: flex; align-items: center; gap: 5px;
+    margin-top: 8px;
+  }
+  .seller-avatar {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: linear-gradient(135deg, #FFD000, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .seller-name { font-size: 11px; color: #999; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .seller-loc { font-size: 11px; color: #bbb; }
+
+  /* ===== Floating Publish Button ===== */
+  .publish-fab {
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD000 0%, #FF6B00 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px rgba(255,107,0,0.45);
+    color: #fff; font-size: 30px; font-weight: 300;
+    z-index: 50;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .publish-fab:active { transform: scale(0.92); }
+
+  /* ===== Bottom Tab Bar ===== */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    height: 62px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    z-index: 60;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    color: #999;
+    font-size: 10px;
+    cursor: pointer;
+    padding-top: 4px;
+  }
+  .tab-item.active { color: #FF6B00; }
+  .tab-item svg { width: 24px; height: 24px; }
+  .tab-publish {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding-top: 0;
+  }
+  .tab-publish .pub-circle {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD000, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 30px; font-weight: 300;
+    margin-top: -18px;
+    box-shadow: 0 4px 12px rgba(255,107,0,0.4);
+    border: 4px solid #fff;
+  }
+  .tab-publish .pub-label { font-size: 10px; color: #999; margin-top: 2px; }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.78);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (min-width: 481px) {
+    body { box-shadow: 0 0 40px rgba(0,0,0,0.08); }
+  }
+</style></head><body><div class="status-bar"><span id="clock">9:41</span><div class="right"><div class="signal"><i></i><i></i><i></i><i></i></div><span style="font-size:12px">5G</span><div class="battery"><i></i></div></div></div><div class="header"><div class="header-top"><div class="logo"><div class="fish">🐟</div><span class="name">闲鱼</span></div><div class="search-box" onclick="showToast('搜索功能开发中')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>搜索你感兴趣的商品</span><span class="tag">搜索</span></div><div class="msg-btn" onclick="showToast('暂无新消息')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="badge">3</span></div></div></div><div class="top-tabs"><div class="tab active" onclick="switchTab(this,'推荐')">推荐</div><div class="tab" onclick="switchTab(this,'关注')">关注</div><div class="tab" onclick="switchTab(this,'附近')">附近</div><div class="tab" onclick="switchTab(this,'直播')">直播</div><div class="spacer"></div><div class="filter-btn" onclick="showToast('筛选面板')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    筛选
+  </div></div><div class="categories" id="categories"></div><div class="banner" onclick="showToast('活动页面建设中')"><div class="banner-text"><div class="t1">让闲置游起来 🐟</div><div class="t2">百亿补贴 · 放心卖 · 高价回收</div></div><div class="banner-fish">🐠</div></div><div class="section-title"><div class="bar"></div><span class="title">猜你喜欢</span><span class="sub">根据你的浏览推荐</span></div><div class="product-grid" id="productGrid"></div><div class="publish-fab" onclick="showToast('发布闲置物品')">+</div><div class="tab-bar"><div class="tab-item active" onclick="switchBottom(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></div><div class="tab-item" onclick="switchBottom(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>分类</span></div><div class="tab-publish" onclick="showToast('发布闲置')"><div class="pub-circle">+</div><span class="pub-label">发布</span></div><div class="tab-item" onclick="switchBottom(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>消息</span></div><div class="tab-item" onclick="switchBottom(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的</span></div></div><div class="toast" id="toast"></div><script>
+  // ===== Clock =====
+  function updateClock() {
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0');
+    const m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${h}:${m}`;
+  }
+  updateClock(); setInterval(updateClock, 30000);
+
+  // ===== Categories =====
+  const cats = [
+    {icon:'📱', label:'数码', bg:'#FFF3E0'},
+    {icon:'👕', label:'服饰', bg:'#E3F2FD'},
+    {icon:'🛋️', label:'家居', bg:'#F3E5F5'},
+    {icon:'💄', label:'美妆', bg:'#FCE4EC'},
+    {icon:'🍼', label:'母婴', bg:'#E8F5E9'},
+    {icon:'📚', label:'图书', bg:'#FFF8E1'},
+    {icon:'🔌', label:'家电', bg:'#E0F7FA'},
+    {icon:'⚽', label:'运动', bg:'#FBE9E7'},
+    {icon:'🎮', label:'游戏', bg:'#EDE7F6'},
+    {icon:'⋯', label:'更多', bg:'#F5F5F5'},
+  ];
+  document.getElementById('categories').innerHTML = cats.map(c =>
+    `<div class="cat-item" onclick="showToast('${c.label}分类')"><div class="cat-icon" style="background:${c.bg}">${c.icon}</div><div class="cat-label">${c.label}</div></div>`
+  ).join('');
+
+  // ===== Products =====
+  const products = [
+    {img:'https://picsum.photos/seed/xianyu1/400/400', title:'iPhone 14 Pro 256G 暗紫色 9成新 全套配件', price:5299, original:8999, tag:'9成新', wants:128, name:'数码小王', loc:'杭州'},
+    {img:'https://picsum.photos/seed/xianyu2/400/520', title:'Nike Air Jordan 1 高帮 42码 穿过两次 正品支持鉴定', price:899, original:1599, tag:'几乎全新', wants:56, name:'球鞋控', loc:'上海'},
+    {img:'https://picsum.photos/seed/xianyu3/400/400', title:'MacBook Pro M2 14寸 16+512 2023款 带AC+', price:11800, original:15999, tag:'95新', wants:89, name:'码农老张', loc:'北京'},
+    {img:'https://picsum.photos/seed/xianyu4/400/520', title:'优衣库羽绒服 女款 M码 浅灰色 只穿了一个冬天', price:199, original:599, tag:'8成新', wants:23, name:'换季清仓', loc:'广州'},
+    {img:'https://picsum.photos/seed/xianyu5/400/400', title:'Sony WH-1000XM5 头戴式降噪耳机 黑色 国行', price:1699, original:2899, tag:'9成新', wants:77, name:'耳机发烧友', loc:'深圳'},
+    {img:'https://picsum.photos/seed/xianyu6/400/520', title:'戴森吹风机 HD15 紫红色 配件齐全 自用闲置', price:1899, original:2990, tag:'95新', wants:145, name:'精致生活家', loc:'成都'},
+    {img:'https://picsum.photos/seed/xianyu7/400/400', title:'iPad Air 5 64G WiFi 蓝色 2022款 带笔和保护套', price:3199, original:4799, tag:'9成新', wants:63, name:'学生出闲置', loc:'武汉'},
+    {img:'https://picsum.photos/seed/xianyu8/400/520', title:'Lululemon 瑜伽裤 6码 黑色 正品 九成新', price:380, original:750, tag:'9成新', wants:41, name:'瑜伽小姐姐', loc:'南京'},
+    {img:'https://picsum.photos/seed/xianyu9/400/400', title:'Kindle Paperwhite 第11代 8G 黑色 几乎全新', price:599, original:998, tag:'几乎全新', wants:92, name:'阅读爱好者', loc:'杭州'},
+    {img:'https://picsum.photos/seed/xianyu10/400/520', title:'乐高哈利波特霍格沃茨城堡 已拼 有说明书 可拆', price:2200, original:3999, tag:'8成新', wants:35, name:'积木收藏家', loc:'北京'},
+    {img:'https://picsum.photos/seed/xianyu11/400/400', title:'Switch OLED 白色主机 日版 带两个游戏 配件齐', price:1699, original:2599, tag:'95新', wants:110, name:'游戏玩家', loc:'上海'},
+    {img:'https://picsum.photos/seed/xianyu12/400/520', title:'大疆Mini 3 Pro 无人机 带屏遥控器 两块电池 无炸机', price:3899, original:5788, tag:'9成新', wants:68, name:'航拍达人', loc:'广州'},
+  ];
+
+  function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    // split into 2 columns for masonry-ish
+    const col1 = [], col2 = [];
+    products.forEach((p, i) => (i % 2 === 0 ? col1 : col2).push(p));
+    const col = (list) => list.map(p => `
+      <div class="product-card" onclick="showToast('查看「${p.title.slice(0,8)}...」')"><div class="product-img"><img src="${p.img}" alt="${p.title}" loading="lazy"><span class="product-tag">${p.tag}</span><span class="product-wants">❤ ${p.wants}人想要</span></div><div class="product-info"><div class="product-title">${p.title}</div><div class="product-price"><span class="currency">¥</span><span class="amount">${p.price.toLocaleString()}</span><span class="original">¥${p.original.toLocaleString()}</span></div><div class="product-seller"><div class="seller-avatar">${p.name[0]}</div><span class="seller-name">${p.name}</span><span class="seller-loc">${p.loc}</span></div></div></div>
+    `).join('');
+    grid.innerHTML = `<div>${col(col1)}</div><div>${col(col2)}</div>`;
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = '1fr 1fr';
+    grid.style.gap = '8px';
+  }
+  renderProducts();
+
+  // ===== Interactions =====
+  function switchTab(el, name) {
+    document.querySelectorAll('.top-tabs .tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    showToast(`已切换到「${name}」`);
+  }
+  function switchBottom(el) {
+    document.querySelectorAll('.tab-bar .tab-item').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  // pull-to-refresh hint
+  let startY = 0;
+  document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+</script></body></html>
